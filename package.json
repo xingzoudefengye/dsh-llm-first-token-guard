@@ -1,0 +1,60 @@
+{
+  "name": "dsh-llm-first-token-guard",
+  "version": "0.1.0",
+  "description": "First-token and heartbeat-aware idle guard for DSH model streams: fails fast when an upstream keeps SSE keep-alives flowing but never produces real content.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "~3.18.5"
+  },
+  "scripts": {
+    "test": "node --test --test-timeout=15000 lib/index.test.js"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": { "optional": true }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "llm",
+    "stream",
+    "timeout",
+    "guard",
+    "plugin",
+    "sse",
+    "keep-alive",
+    "watchdog"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xingzoudefengye/dsh-llm-first-token-guard.git"
+  },
+  "homepage": "https://github.com/xingzoudefengye/dsh-llm-first-token-guard#readme",
+  "bugs": {
+    "url": "https://github.com/xingzoudefengye/dsh-llm-first-token-guard/issues"
+  },
+  "author": "xingzoudefengye",
+  "license": "MIT"
+}

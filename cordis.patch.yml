@@ -1,0 +1,22 @@
+# dsh-llm-first-token-guard bundle patch.
+#
+# 一行：在 `llm/stream` waterfall 最外层包一层「首内容超时」守卫，解决
+# 「上游持续回 SSE 心跳、但一个 token 都不吐」导致的无限挂起。
+#
+# 背景：DSH 自带的 idleWatchdog 只在「一个 chunk 都没有」时超时，有心跳就
+# 永远不会触发（见 anthropic-sdk-typescript#998、litellm#34819 的同类分析）。
+# 本插件改为按「真实内容块」计时，心跳只计数、不重置：
+#
+#   firstTokenMs      从请求发出到第一个真实内容块的硬期限（默认 60s）
+#   idleAfterFirstMs  拿到首个内容后，两次真实内容之间允许的最长静默（默认 120s）
+#   guardProviders    只守卫这些 provider（留空 = 全部）
+#   debug             打印首内容耗时与心跳计数
+#
+# 超时以 finish(error) 收尾，因此可以正常触发 provider 的 retryPolicy 重试。
+
+- insert:
+    - id: llm-first-token-guard
+      name: 'dsh-llm-first-token-guard'
+      config:
+        firstTokenMs: 60000
+        idleAfterFirstMs: 120000
