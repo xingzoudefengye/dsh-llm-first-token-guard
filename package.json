@@ -1,13 +1,14 @@
 {
   "name": "dsh-llm-first-token-guard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "First-token and heartbeat-aware idle guard for DSH model streams: fails fast when an upstream keeps SSE keep-alives flowing but never produces real content.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js",
     "./cordis.patch.yml": "./cordis.patch.yml",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./locale/*": "./locale/*"
   },
   "files": [
     "lib",
