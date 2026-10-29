@@ -1,0 +1,5 @@
+{
+  "meta": {
+    "description": "First-token guard for DSH model streams: when an upstream keeps SSE keep-alives flowing but never produces content, fail after 60s and let retryPolicy act instead of hanging forever."
+  }
+}
