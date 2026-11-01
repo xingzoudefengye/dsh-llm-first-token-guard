@@ -32,7 +32,13 @@ DSH 内置的 `idleWatchdog`（`@deepseek-ai/dsh-timeout`）只在**一个 chunk
 
 「真实内容块」指 `text-delta` / `reasoning-delta` / `tool-call-delta` / `block-start` / `block-end`。`usage`、空 delta、SSE 保活注释只计数，不重置计时器。
 
-超时抛错，因此会走 provider 自己的 `retryPolicy` 正常重试，而不是无声空等。`guardStream` 的 `finally` 会调用 `iterator.return()`，pi-ai 适配器据此执行 `consumer.abort(...)`，上游 HTTP 连接随之关闭。
+超时**以 `finish` chunk 收尾**，不是抛异常：
+
+```js
+{ type: "finish", reason: { kind: "error", failure: { message, code: "TIMEOUT" } } }
+```
+
+因为 `dsh-agent-loop` 只有在拿到 `finish` 且 `reason.kind === "error"` 时才走 `agent/request-error` 瀑布去问 retryPolicy；在流迭代中抛出的异常会被直接 rethrow，整轮立刻失败、**一次都不重试**（v0.1.1 的 bug，2026-11-01 实测修复）。所以现在超时会按 provider 的 `retryPolicy` 正常重试，错误码也归一成 `TIMEOUT`。`guardStream` 的 `finally` 会调用 `iterator.return()`，pi-ai 适配器据此执行 `consumer.abort(...)`，上游 HTTP 连接随之关闭。
 
 **不修改任何 DSH 核心包**，纯插件实现。
 
